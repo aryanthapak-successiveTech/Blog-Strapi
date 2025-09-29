@@ -14,5 +14,5 @@ export async function POST(req) {
   const cookieStore=await cookies();
   cookieStore.set("token",userInfo.jwt);
 
-  return NextResponse.json({ ok: true ,token:userInfo.jwt});
+  return NextResponse.json({ ok: true ,token:userInfo.jwt,user:{userName:userInfo.user.name}});
 }

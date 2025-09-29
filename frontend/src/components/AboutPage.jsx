@@ -30,8 +30,10 @@ export default function AboutPage() {
 
       <article
         className="prose prose-lg max-w-none"
-        dangerouslySetInnerHTML={{ __html: aboutPage.content }}
-      />
+      >
+        <p>{aboutPage?.content}</p>
+
+      </article>
     </section>
   );
 }

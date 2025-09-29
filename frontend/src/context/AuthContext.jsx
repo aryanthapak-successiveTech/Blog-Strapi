@@ -1,6 +1,7 @@
 "use client";
 
 import { BASE_URL } from "@/utils/Constants";
+import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext(null);
@@ -9,10 +10,10 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const router=useRouter();
   useEffect(() => {
     const fetchTokenAndUser = async () => {
       try {
-        // fetch token from cookie
         const res = await fetch("/api/auth/token");
         if (!res.ok) {
           setToken(null);
@@ -32,6 +33,7 @@ export function AuthProvider({ children }) {
               },
             }
           );
+          
           if (userRes.ok) {
             const userData = await userRes.json();
             const {username,role}=userData
@@ -58,6 +60,7 @@ export function AuthProvider({ children }) {
     } finally {
       setToken(null);
       setUser(null);
+      router.push("/");
     }
   };
 

@@ -50,7 +50,6 @@ export default function UserBlogs() {
         </p>
       </Link>
 
-      {/* Edit button */}
       <button
         onClick={() => onEditClick(blog.documentId)}
         className="absolute top-2 right-2 px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-500 transition"
