@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_sections_footers",
+  "info": {
+    "displayName": "Footer"
+  },
+  "options": {},
+  "attributes": {
+    "footerText": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "config": {}
+}

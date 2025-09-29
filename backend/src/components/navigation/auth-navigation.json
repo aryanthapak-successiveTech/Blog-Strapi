@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_navigation_auth_navigations",
+  "info": {
+    "displayName": "AuthNavigation"
+  },
+  "options": {},
+  "attributes": {
+    "buttonText": {
+      "type": "string",
+      "required": true
+    },
+    "buttonRoute": {
+      "type": "string",
+      "required": true
+    },
+    "buttonLogo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    }
+  },
+  "config": {}
+}

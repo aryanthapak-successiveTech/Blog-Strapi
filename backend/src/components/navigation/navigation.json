@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_navigation_navigations",
+  "info": {
+    "displayName": "Navigation",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "route": {
+      "type": "string",
+      "unique": true
+    }
+  },
+  "config": {}
+}
