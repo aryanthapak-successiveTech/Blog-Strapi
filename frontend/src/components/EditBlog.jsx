@@ -3,26 +3,22 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client/react";
 import { useParams, useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
 import { BASE_URL } from "@/utils/Constants";
-import { GET_BLOG } from "@/graphql/blogs/queries";
+import { GET_BLOG, GET_BLOGS_WITH_FILTER } from "@/graphql/blogs/queries";
 import { UPDATE_BLOG } from "@/graphql/blogs/mutations";
-
-
+import { useAuth } from "@/context/AuthContext";
 
 export default function EditBlog() {
-  const { token } = useAuth();
+  const {user,token}=useAuth();
   const { blogId } = useParams();
   const router = useRouter();
 
-  const { data, loading: queryLoading, error: queryError } = useQuery(GET_BLOG, {
+  const {
+    data,
+    loading: queryLoading,
+    error: queryError,
+  } = useQuery(GET_BLOG, {
     variables: { documentId: blogId },
-    context: {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-    skip: !token,
   });
 
   const [updateBlog, { loading: mutationLoading, error: mutationError }] =
@@ -40,7 +36,8 @@ export default function EditBlog() {
   }, [data]);
 
   if (queryLoading) return <p>Loading blog…</p>;
-  if (queryError) return <p className="text-red-500">Error: {queryError.message}</p>;
+  if (queryError)
+    return <p className="text-red-500">Error: {queryError.message}</p>;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,12 +66,17 @@ export default function EditBlog() {
           article,
           blogImage: imageId,
         },
+        status: "PUBLISHED",
       },
-      context: {
-        headers: { Authorization: `Bearer ${token}` },
+      refetchQueries: [{ query: GET_BLOG, variables: { documentId: blogId } },{query:GET_BLOGS_WITH_FILTER, variables: {
+      filters: {
+        postedBy: {
+          username: { eq: user?.username },
+        },
       },
+    },}],
+      awaitRefetchQueries: true,
     });
-
     router.push(`/blogs/${blogId}`);
   };
 

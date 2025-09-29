@@ -10,7 +10,7 @@ import { ADD_COMMENT } from "@/graphql/comments/mutations";
 
 export default function CommentSection() {
   const { blogId } = useParams();
-  const { user, token } = useAuth();
+  const { user} = useAuth();
   const [commentText, setCommentText] = useState("");
 
   const { data, loading, error, refetch } = useQuery(GET_COMMENTS, {
@@ -42,12 +42,7 @@ export default function CommentSection() {
           commentText,
           commentedOn: blogId,
         },
-      },
-      context: {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
+      }
     });
   };
 

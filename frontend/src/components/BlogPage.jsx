@@ -12,6 +12,7 @@ export default function BlogPage() {
 
   const { loading, error, data } = useQuery(GET_BLOG, {
     variables: { documentId: blogId },
+    fetchPolicy: "network-only"
   });
 
   if (loading) return <p className="p-4">Loading blog...</p>;

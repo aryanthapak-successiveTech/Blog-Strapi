@@ -8,7 +8,7 @@ import Image from "next/image";
 
 export default function Home() {
   const { homepage, loading: homeLoading, error: homeError } = useHomepage();
-  const { blogs, loading: blogsLoading, error: blogsError } = useBlogs();
+  const { blogs, loading: blogsLoading, error: blogsError } = useBlogs({pagination:{page:1,pageSize:3},sort:"createdAt:desc"});
   if (homeLoading || blogsLoading) return <p>Loading...</p>;
   if (homeError || blogsError) return <p>Something went wrong!</p>;
 

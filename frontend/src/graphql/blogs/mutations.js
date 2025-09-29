@@ -14,8 +14,8 @@ export const CREATE_BLOG = gql`
 `;
 
 export const UPDATE_BLOG = gql`
-  mutation UpdateBlog($documentId: ID!, $data: BlogInput!) {
-    updateBlog(documentId: $documentId, data: $data) {
+  mutation UpdateBlog($documentId: ID!, $status: PublicationStatus, $data: BlogInput!) {
+    updateBlog(documentId: $documentId,  status: $status,data: $data) {
       documentId
       title
       article

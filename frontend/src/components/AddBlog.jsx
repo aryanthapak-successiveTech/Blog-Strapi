@@ -1,12 +1,10 @@
 "use client"
-import { useAuth } from "@/context/AuthContext";
 import { CREATE_BLOG } from "@/graphql/blogs/mutations";
 import { BASE_URL } from "@/utils/Constants";
 import { useMutation } from "@apollo/client/react";
 import { useState } from "react";
 
 export default function AddBlog() {
-  const { token } = useAuth();
   const [title, setTitle] = useState("");
   const [article, setArticle] = useState("");
   const [file, setFile] = useState(null);
@@ -42,12 +40,7 @@ export default function AddBlog() {
           article,
           blogImage: imageId,
         },
-      },
-      context: {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
+      }
     });
 
     setTitle("");

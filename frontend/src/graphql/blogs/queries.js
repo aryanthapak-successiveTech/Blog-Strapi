@@ -1,15 +1,22 @@
 import { gql } from "@apollo/client/core";
 
 export const GET_BLOGS = gql`
-  query Blogs($pagination: PaginationArg) {
-    blogs(pagination: $pagination) {
-      title
-      blogImage {
-        url
+  query Blogs_connection($pagination: PaginationArg) {
+    blogs_connection(pagination: $pagination) {
+      pageInfo {
+        total
+        page
+        pageSize
+        pageCount
       }
-      documentId
-      createdAt
-      publishedAt
+      nodes {
+        documentId
+        title
+        blogImage {
+          url
+        }
+        createdAt
+      }
     }
   }
 `;
