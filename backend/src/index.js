@@ -10,123 +10,56 @@ module.exports = {
   register({ strapi }) {
     const extensionService = strapi.plugin("graphql").service("extension");
     extensionService.use({
+      typeDefs: `
+      type PageInfo {
+        nextCursor:String,
+        hasNextPage:Boolean!
+      }
+      
+      type BlogConnection{
+        data:[Blog!]!,
+        pageInfo:PageInfo!
+      }
+
+      type Query{
+      blogsPaginated(cursor:String,limit:Int):BlogConnection!
+      }
+      `,
+      resolversConfig: {
+    "Query.blogsPaginated": {
+      auth: false,
+    },},
       resolvers: {
-        Mutation: {
-          async createBlog(parent, args, context, info) {
-            const { id: userId } = context.state.user || {};
-            if (!userId) {
-              throw new Error("Unauthorized");
-            }
-            args.data.postedBy = userId;
-            const createdBlog = await strapi.service("api::blog.blog").create({
-              data: args.data,
-            });
-
-            return createdBlog;
+        Query: {
+          async aboutPage(parent, args, ctx) {
+            const data = await strapi
+              .service("api::about-page.about-page")
+              .findOne({ args });
+            return data;
           },
+          async blog(parent, args, ctx) {
+            const { documentId } = args;
 
-          async createComment(parent, args, context) {
-            const { id: userId } = context.state.user || {};
-            if (!userId) {
-              throw new Error("Unauthorized");
-            }
-
-            const { data } = args;
-
-            if (!data.commentText || !data.commentedOn) {
-              throw new Error("Comment text and blog ID are required");
-            }
-
-            const blog = await strapi.db.query("api::blog.blog").findOne({
-              where: { documentId: data.commentedOn },
-            });
-
-            if (!blog) {
-              throw new Error("Blog does not exist");
-            }
-
-            const newComment = await strapi.entityService.create(
-              "api::comment.comment",
-              {
-                data: {
-                  commentText: data.commentText,
-                  commentedOn: data.commentedOn,
-                  commentedBy: userId,
-                },
-                populate: ["commentedBy", "commentedOn"],
-              }
-            );
-            
-            return newComment;
-          },
-
-          async deleteBlog(parent, args, context) {
-            const { id: userId } = context.state.user || {};
-            if (!userId) {
-              throw new Error("Unauthorized");
-            }
-
-            const { documentId: blogId } = args;
-            if (!blogId) {
-              throw new Error("Blog Id isn't provided");
-            }
-
-            const blog = await strapi
+            const data = await strapi
               .service("api::blog.blog")
-              .findOne(blogId, {
-                populate: ["postedBy"],
-              });
+              .getBlog(documentId);
 
-            if (!blog) {
-              throw new Error("Blog not found");
-            }
-
-            if (blog.postedBy.id != userId) {
-              throw new Error("You aren't author of this blog");
-            }
-
-            await strapi.service("api::blog.blog").delete(blogId);
-
-            return { documentId: blogId };
+            return data;
           },
-
-          async updateBlog(parent, args, context) {
-            const { id: userId } = context.state.user || {};
-            if (!userId) {
-              throw new Error("Unauthorized");
-            }
-
-            const { documentId, title, article, blogImage } = args;
-            if (!documentId) {
-              throw new Error("Blog Id isn't provided");
-            }
-
-            const [blog] = await strapi.entityService.findMany(
-              "api::blog.blog",
-              {
-                filters: { documentId },
-                populate: ["postedBy"],
-              }
-            );
-
-            if (!blog) {
-              throw new Error("Blog doesn't exist");
-            }
-
-            if (blog.postedBy?.id !== userId) {
-              throw new Error("You aren't the author of this blog");
-            }
-
-            const updatedBlog = await strapi.entityService.update(
-              "api::blog.blog",
-              blog.id,
-              {
-                data: args.data, // <-- use args.data directly
-              }
-            );
-
-            return updatedBlog;
-          },
+          async blogsPaginated(parent, args, ctx) {
+          const {cursor,limit}=args;
+          const decodedCursor=cursor?JSON.parse(Buffer.from(cursor,"base64").toString("utf8")):null;
+          const blogsDataAndPagination=await strapi.service("api::blog.blog").getPaginatedBlogs({cursor:decodedCursor,limit});
+          return blogsDataAndPagination;
+        },
+        async siteSetting(){
+          const siteSetting=await strapi.service("api::site-setting.site-setting").getSiteSettings();
+          return siteSetting;
+        },
+        async homepage(){
+          const homepage=await strapi.service("api::homepage.homepage").getHomePage();
+          return homepage;
+        }
         },
       },
     });

@@ -4,10 +4,12 @@ import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { ApolloProvider } from "@apollo/client/react";
 import { HttpLink } from "@apollo/client/core";
 import { setContext } from "@apollo/client/link/context";
-import { useAuth } from "./AuthContext";
+import { useSession } from "next-auth/react";
 
 export const ApolloClientProvider = ({ children }) => {
-  const { token } = useAuth();
+  const session=useSession();
+  const isAuthenticated=session?.status==="authenticated";
+  const token=isAuthenticated?process.env.NEXT_PUBLIC_STRAPI_API_TOKEN:null;
 
   const client = useMemo(() => {
     const httpLink = new HttpLink({
@@ -17,7 +19,7 @@ export const ApolloClientProvider = ({ children }) => {
     const authLink = setContext((_, { headers }) => ({
       headers: {
         ...headers,
-        authorization: token ? `Bearer ${token}` : "",
+        authorization: `Bearer ${token}`
       },
     }));
 
@@ -25,7 +27,7 @@ export const ApolloClientProvider = ({ children }) => {
       link: authLink.concat(httpLink),
       cache: new InMemoryCache(),
     });
-  }, [token]);
+  }, [isAuthenticated]);
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>;
 };

@@ -1,20 +1,33 @@
-"use client";
-
 import React from "react";
-import { useHomepage } from "@/hooks/useHomepage";
-import { useBlogs } from "@/hooks/useBlogs";
 import { BASE_URL } from "@/utils/Constants";
 import Image from "next/image";
+import { getClient } from "@/lib/apolloClient";
+import { GET_HOMEPAGE } from "@/graphql/homepage/queries";
+import { GET_BLOGS } from "@/graphql/blogs/queries";
+import Link from "next/link";
 
-export default function Home() {
-  const { homepage, loading: homeLoading, error: homeError } = useHomepage();
-  const { blogs, loading: blogsLoading, error: blogsError } = useBlogs({pagination:{page:1,pageSize:3},sort:"createdAt:desc"});
+export default async function Home() {
+  const client = getClient();
+  const {
+    data: homepageData,
+    loading: homeLoading,
+    error: homeError,
+  } = await client.query({ query: GET_HOMEPAGE });
+  const {
+    data: blogData,
+    loading: blogsLoading,
+    error: blogsError,
+  } = await client.query({
+    query: GET_BLOGS,
+    variables: { pagination: { page: 1, pageSize: 3 }, sort: "createdAt:desc" },
+  });
+  const homepage = homepageData.homepage;
+  const blogs = blogData.blogs_connection.nodes;
   if (homeLoading || blogsLoading) return <p>Loading...</p>;
   if (homeError || blogsError) return <p>Something went wrong!</p>;
 
   return (
     <main className="min-h-screen bg-white text-gray-900">
-
       <section className="bg-gradient-to-br from-blue-600 to-purple-600 text-white py-20 px-6 text-center">
         <h1 className="text-4xl md:text-6xl font-bold mb-4">
           {homepage?.hero?.title ?? "Welcome to My Blog App"}
@@ -43,9 +56,11 @@ export default function Home() {
       <section className="max-w-6xl mx-auto px-4 py-16">
         <h2 className="text-2xl font-semibold mb-6">Latest Blogs</h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          
           {blogs.map((blog) => (
+            <Link href={`blogs/${blog.documentId}`}  key={blog.documentId}>
             <div
-              key={blog.documentId}
+             
               className="bg-white shadow-md rounded-lg p-6 border hover:shadow-lg transition"
             >
               {blog.blogImage?.url && (
@@ -54,13 +69,17 @@ export default function Home() {
                   height={200}
                   alt={blog.title}
                   className="w-full h-48 object-cover mb-4 rounded"
-                  src={`${BASE_URL}${blog.blogImage.url}`}/>)}
+                  src={`${BASE_URL}${blog.blogImage.url}`}
+                  priority
+                />
+              )}
               <h3 className="text-xl font-bold mb-2">{blog.title}</h3>
               <p className="text-gray-700 line-clamp-3">{blog.article}</p>
               <p className="text-sm text-gray-500 mt-4">
                 Posted on {new Date(blog.createdAt).toLocaleDateString()}
               </p>
             </div>
+            </Link>
           ))}
         </div>
       </section>

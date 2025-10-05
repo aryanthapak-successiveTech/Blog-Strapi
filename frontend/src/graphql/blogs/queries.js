@@ -52,3 +52,22 @@ export const GET_BLOGS_WITH_FILTER = gql`
     }
   }
 `;
+
+export const GET_BLOG_PAGINATED = gql`
+  query BlogsPaginated($cursor: String, $limit: Int) {
+    blogsPaginated(cursor: $cursor, limit: $limit) {
+      data {
+        documentId
+        title
+        blogImage {
+          url
+        }
+        createdAt
+      }
+      pageInfo {
+        hasNextPage
+        nextCursor
+      }
+    }
+  }
+`;

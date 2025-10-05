@@ -1,12 +1,11 @@
 import { BASE_URL } from "@/utils/Constants";
-import Link from "next/link";
 import Image from "next/image";
 
-export default function ProviderLoginButton({ logoUrl, loginUrl, buttonText }) {
+export default function Button({ logoUrl, buttonText,onClick,className}) {
   return (
-    <Link
-      href={`${BASE_URL}${loginUrl}`}
-      className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800 transition"
+    <button
+      onClick={onClick}
+      className={className}
     >
       {logoUrl && (
         <Image
@@ -17,6 +16,6 @@ export default function ProviderLoginButton({ logoUrl, loginUrl, buttonText }) {
         />
       )}
       <span>{buttonText}</span>
-    </Link>
+    </button>
   );
 }

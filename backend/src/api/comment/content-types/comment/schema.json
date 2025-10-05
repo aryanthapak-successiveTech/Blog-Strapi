@@ -38,6 +38,9 @@
       "relation": "oneToMany",
       "target": "api::comment.comment",
       "mappedBy": "comment"
+    },
+    "threadID": {
+      "type": "integer"
     }
   }
 }

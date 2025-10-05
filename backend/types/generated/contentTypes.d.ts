@@ -501,6 +501,10 @@ export interface ApiBlogBlog extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    workFlowState: Schema.Attribute.Enumeration<
+      ['draft ', 'review', 'published', 'rejected']
+    > &
+      Schema.Attribute.DefaultTo<'draft '>;
   };
 }
 
@@ -536,6 +540,7 @@ export interface ApiCommentComment extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     replies: Schema.Attribute.Relation<'oneToMany', 'api::comment.comment'>;
+    threadID: Schema.Attribute.Integer;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

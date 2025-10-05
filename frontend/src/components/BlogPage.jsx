@@ -1,22 +1,18 @@
-"use client";
-
-import { useQuery } from "@apollo/client/react";
-import { useParams } from "next/navigation";
 import Image from "next/image";
 import { BASE_URL } from "@/utils/Constants";
 import { GET_BLOG } from "@/graphql/blogs/queries";
 import CommentSection from "@/components/CommentSection";
+import { getClient } from "@/lib/apolloClient";
 
-export default function BlogPage() {
-  const { blogId } = useParams();
-
-  const { loading, error, data } = useQuery(GET_BLOG, {
+export default async function BlogPage({ params }) {
+  const blogParams=await params;
+  const {blogId}=blogParams
+  const client = getClient();
+  const { data } = await client.query({
+    query: GET_BLOG,
     variables: { documentId: blogId },
-    fetchPolicy: "network-only"
+    fetchPolicy: "network-only",
   });
-
-  if (loading) return <p className="p-4">Loading blog...</p>;
-  if (error) return <p className="p-4 text-red-500">Error: {error.message}</p>;
 
   const blog = data?.blog;
 
@@ -41,13 +37,16 @@ export default function BlogPage() {
             width={800}
             height={400}
             className="rounded-lg object-cover"
+            priority
           />
         </div>
       )}
       <div className="prose max-w-none">
         <p>{blog.article}</p>
       </div>
-              <CommentSection/>
+
+      {/* 👇 Client-side component for comments */}
+      <CommentSection blogId={blogId}/>
     </article>
   );
 }
