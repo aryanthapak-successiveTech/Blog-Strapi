@@ -1,10 +1,10 @@
 const redis =require("../../../../../config/redis");
 
 module.exports={
-    async afterUpdate(event){
+    async afterUpdate(){
         await redis.DEL("site-settings");
     },
-    async afterDelete(event){
+    async afterDelete(){
         await redis.DEL("site-settings");
     }
 };

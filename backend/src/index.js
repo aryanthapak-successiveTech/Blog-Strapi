@@ -38,11 +38,11 @@ module.exports = {
             return data;
           },
           async blog(parent, args, ctx) {
-            const { documentId } = args;
+            const { documentId ,status} = args;
 
             const data = await strapi
               .service("api::blog.blog")
-              .getBlog(documentId);
+              .getBlog(documentId,status);
 
             return data;
           },
@@ -56,8 +56,8 @@ module.exports = {
           const siteSetting=await strapi.service("api::site-setting.site-setting").getSiteSettings();
           return siteSetting;
         },
-        async homepage(){
-          const homepage=await strapi.service("api::homepage.homepage").getHomePage();
+        async homepage(parent,args,ctx){
+          const homepage=await strapi.service("api::homepage.homepage").getHomePage(args.status);
           return homepage;
         }
         },

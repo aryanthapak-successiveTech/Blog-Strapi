@@ -5,7 +5,9 @@ export const GET_ABOUT=gql`query Blog {
     title
     content
     heroImage {
-      url
+      url,
+      height,
+      width
     }
   }
 }`

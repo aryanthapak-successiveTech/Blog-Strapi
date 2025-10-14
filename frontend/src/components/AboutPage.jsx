@@ -14,7 +14,7 @@ export default async function AboutPage() {
 
   return (
     <section className="max-w-4xl mx-auto px-6 py-12">
-      <h1 className="text-4xl font-bold mb-6">{aboutPage.title}</h1>
+      <h2 className="text-4xl font-bold mb-6">{aboutPage.title}</h2>
 
       {aboutPage.heroImage?.url && (
         <div className="mb-6">

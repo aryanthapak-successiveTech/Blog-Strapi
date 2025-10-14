@@ -22,8 +22,8 @@ export const GET_BLOGS = gql`
 `;
 
 export const GET_BLOG = gql`
-  query Blog($documentId: ID!) {
-    blog(documentId: $documentId) {
+  query Blog($documentId: ID!, $status: PublicationStatus) {
+  blog(documentId: $documentId, status: $status){
       documentId
       title
       article
@@ -63,6 +63,7 @@ export const GET_BLOG_PAGINATED = gql`
           url
         }
         createdAt
+        publishedAt
       }
       pageInfo {
         hasNextPage

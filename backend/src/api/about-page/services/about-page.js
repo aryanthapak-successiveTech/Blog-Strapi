@@ -12,7 +12,6 @@ module.exports = createCoreService("api::about-page.about-page", ({ strapi }) =>
     const cacheKey = "aboutPage";
 
     const cached = await redis.GET(cacheKey);
-    console.log(cached);
     
     if(cached){
         const aboutPage=JSON.parse(String(cached));

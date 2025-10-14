@@ -45,9 +45,9 @@
     },
     "workFlowState": {
       "type": "enumeration",
-      "default": "draft ",
+      "default": "draft",
       "enum": [
-        "draft ",
+        "draft",
         "review",
         "published",
         "rejected"

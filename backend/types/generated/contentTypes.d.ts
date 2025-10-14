@@ -502,9 +502,9 @@ export interface ApiBlogBlog extends Struct.CollectionTypeSchema {
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     workFlowState: Schema.Attribute.Enumeration<
-      ['draft ', 'review', 'published', 'rejected']
+      ['draft', 'review', 'published', 'rejected']
     > &
-      Schema.Attribute.DefaultTo<'draft '>;
+      Schema.Attribute.DefaultTo<'draft'>;
   };
 }
 

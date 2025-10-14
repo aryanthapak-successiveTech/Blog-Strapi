@@ -3,19 +3,22 @@ import { BASE_URL } from "@/utils/Constants";
 import { GET_BLOG } from "@/graphql/blogs/queries";
 import CommentSection from "@/components/CommentSection";
 import { getClient } from "@/lib/apolloClient";
+import TrackPageView from "./TrackPageViews";
 
-export default async function BlogPage({ params }) {
-  const blogParams=await params;
-  const {blogId}=blogParams
+export default async function BlogPage({params,searchParams}) {
+
+   const { blogId } = await params;
+   const {status}=await searchParams;
+   
   const client = getClient();
+  
   const { data } = await client.query({
     query: GET_BLOG,
-    variables: { documentId: blogId },
+    variables: { documentId: blogId,status },
     fetchPolicy: "network-only",
   });
 
   const blog = data?.blog;
-
   if (!blog) {
     return <p className="p-4">Blog not found.</p>;
   }
@@ -27,7 +30,7 @@ export default async function BlogPage({ params }) {
         <p className="text-gray-600 mb-2">By {blog.postedBy.username}</p>
       )}
       <p className="text-gray-500 text-sm mb-6">
-        Published: {new Date(blog.publishedAt).toLocaleDateString()}
+        Published: {new Date(blog.createdAt).toLocaleDateString()}
       </p>
       {blog.blogImage?.url && (
         <div className="mb-6">
@@ -45,7 +48,6 @@ export default async function BlogPage({ params }) {
         <p>{blog.article}</p>
       </div>
 
-      {/* 👇 Client-side component for comments */}
       <CommentSection blogId={blogId}/>
     </article>
   );

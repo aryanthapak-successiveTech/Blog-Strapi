@@ -5,14 +5,21 @@ import { getClient } from "@/lib/apolloClient";
 import { GET_HOMEPAGE } from "@/graphql/homepage/queries";
 import { GET_BLOGS } from "@/graphql/blogs/queries";
 import Link from "next/link";
+import BlogSection from "./BlogSection";
 
-export default async function Home() {
+export default async function Home({ searchParams }) {
   const client = getClient();
+  const { status } = await searchParams;
   const {
     data: homepageData,
     loading: homeLoading,
     error: homeError,
-  } = await client.query({ query: GET_HOMEPAGE });
+  } = await client.query({
+    query: GET_HOMEPAGE,
+    variables: {
+      status,
+    },
+  });
   const {
     data: blogData,
     loading: blogsLoading,
@@ -37,10 +44,13 @@ export default async function Home() {
             "Read and share ideas, insights, and inspiration."}
         </p>
         {homepage?.hero?.heroImage?.url && (
-          <img
+          <Image
             src={`${BASE_URL}${homepage.hero.heroImage.url}`}
             alt={homepage.hero.title}
-            className="mx-auto mt-6 rounded-lg shadow-lg max-h-96 object-cover"
+            width={homepage.hero.heroImage.width}
+            height={homepage.hero.heroImage.height}
+            className="mx-auto mt-6 rounded-lg shadow-lg object-cover"
+            priority
           />
         )}
         {homepage?.hero?.ctaText && (
@@ -52,38 +62,7 @@ export default async function Home() {
           </a>
         )}
       </section>
-
-      <section className="max-w-6xl mx-auto px-4 py-16">
-        <h2 className="text-2xl font-semibold mb-6">Latest Blogs</h2>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          
-          {blogs.map((blog) => (
-            <Link href={`blogs/${blog.documentId}`}  key={blog.documentId}>
-            <div
-             
-              className="bg-white shadow-md rounded-lg p-6 border hover:shadow-lg transition"
-            >
-              {blog.blogImage?.url && (
-                <Image
-                  width={400}
-                  height={200}
-                  alt={blog.title}
-                  className="w-full h-48 object-cover mb-4 rounded"
-                  src={`${BASE_URL}${blog.blogImage.url}`}
-                  priority
-                />
-              )}
-              <h3 className="text-xl font-bold mb-2">{blog.title}</h3>
-              <p className="text-gray-700 line-clamp-3">{blog.article}</p>
-              <p className="text-sm text-gray-500 mt-4">
-                Posted on {new Date(blog.createdAt).toLocaleDateString()}
-              </p>
-            </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
+      <BlogSection blogs={blogs}/>
       <footer className="text-center py-6 text-sm text-gray-500 border-t">
         <p>{homepage?.footer?.footerText}</p>
       </footer>
